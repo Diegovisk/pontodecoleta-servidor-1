@@ -32,3 +32,8 @@ sudo mosquitto -c ./config/mosquitto.conf -v
 ```
 Não se esqueça de mudar o que vem depois de "listener" para seu ip!
 ### :)
+Caso queira apagar o banco, rode:
+```console
+sudo docker volume rm $(sudo docker volume ls -q)
+```
+
