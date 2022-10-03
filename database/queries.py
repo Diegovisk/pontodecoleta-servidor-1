@@ -105,6 +105,11 @@ def get_caixas():
                 cursor.execute(get_caixas_query)
                 caixas = cursor.fetchall()
                 print("SUCESSO EM BUSCAR CAIXAS")
+                # to dict
+                caixas = [
+                    dict(zip([key[0] for key in cursor.description], caixa))
+                    for caixa in caixas
+                ]
                 return caixas
     except Error as e:
         print(e)
@@ -115,7 +120,7 @@ def get_coletas(id_caixa):
     get_coletas_query = """
     SELECT * FROM Coletas
     WHERE id_caixa = %s
-    ORDER BY timestamp DESC
+    ORDER BY timestamp ASC
     """
     try:
         with connect(
@@ -128,61 +133,13 @@ def get_coletas(id_caixa):
             with connection.cursor() as cursor:
                 cursor.execute(get_coletas_query, (id_caixa,))
                 coletas = cursor.fetchall()
+                # to dict
+                coletas = [
+                    dict(zip([key[0] for key in cursor.description], coleta))
+                    for coleta in coletas
+                ]
                 print("SUCESSO EM BUSCAR COLETAS")
                 return coletas
-    except Error as e:
-        print(e)
-
-
-# get all rows from Capacidades table, ordered by timestamp, for a given id_caixa, between two timestamps
-def get_capacidades(id_caixa, timestamp_inicial, timestamp_final):
-    get_capacidades_query = """
-    SELECT * FROM Capacidades
-    WHERE id_caixa = %s AND timestamp BETWEEN %s AND %s
-    ORDER BY timestamp DESC
-    """
-    try:
-        with connect(
-            host=os.getenv("MYSQL_HOST"),
-            user=os.getenv("MYSQL_USER"),
-            password=os.getenv("MYSQL_PASSWORD"),
-            database=os.getenv("MYSQL_DATABASE"),
-        ) as connection:
-            print("CONECTADO")
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    get_capacidades_query,
-                    (id_caixa, timestamp_inicial, timestamp_final),
-                )
-                capacidades = cursor.fetchall()
-                print("SUCESSO EM BUSCAR CAPACIDADES")
-                return capacidades
-    except Error as e:
-        print(e)
-
-
-# get rows from doacoes table, ordered by timestamp, for a given id_caixa, between two timestamps
-def get_doacoes(id_caixa, timestamp_inicial, timestamp_final):
-    get_doacoes_query = """
-    SELECT * FROM Doacoes
-    WHERE id_caixa = %s AND timestamp BETWEEN %s AND %s
-    ORDER BY timestamp DESC
-    """
-    try:
-        with connect(
-            host=os.getenv("MYSQL_HOST"),
-            user=os.getenv("MYSQL_USER"),
-            password=os.getenv("MYSQL_PASSWORD"),
-            database=os.getenv("MYSQL_DATABASE"),
-        ) as connection:
-            print("CONECTADO")
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    get_doacoes_query, (id_caixa, timestamp_inicial, timestamp_final)
-                )
-                doacoes = cursor.fetchall()
-                print("SUCESSO EM BUSCAR DOACOES")
-                return doacoes
     except Error as e:
         print(e)
 
@@ -209,6 +166,38 @@ def insert_capacidade(cm_restantes, id_caixa):
         print(e)
 
 
+# get all rows from Capacidades table, ordered by timestamp, for a given id_caixa, between two timestamps
+def get_capacidades(id_caixa, timestamp_inicial, timestamp_final):
+    get_capacidades_query = """
+    SELECT * FROM Capacidades
+    WHERE id_caixa = %s AND timestamp BETWEEN %s AND %s
+    ORDER BY timestamp ASC
+    """
+    try:
+        with connect(
+            host=os.getenv("MYSQL_HOST"),
+            user=os.getenv("MYSQL_USER"),
+            password=os.getenv("MYSQL_PASSWORD"),
+            database=os.getenv("MYSQL_DATABASE"),
+        ) as connection:
+            print("CONECTADO")
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    get_capacidades_query,
+                    (id_caixa, timestamp_inicial, timestamp_final),
+                )
+                capacidades = cursor.fetchall()
+                print("SUCESSO EM BUSCAR CAPACIDADES")
+                # to dict
+                capacidades = [
+                    dict(zip([key[0] for key in cursor.description], capacidade))
+                    for capacidade in capacidades
+                ]
+                return capacidades
+    except Error as e:
+        print(e)
+
+
 # Insert row in Doacoes table
 def insert_doacao(doacao, id_caixa):
     create_doacao_query = """
@@ -227,6 +216,37 @@ def insert_doacao(doacao, id_caixa):
                 cursor.execute(create_doacao_query, (doacao, id_caixa))
                 connection.commit()
                 print("SUCESSO EM INSERIR VALORES DA DOAÇÃO")
+    except Error as e:
+        print(e)
+
+
+# get rows from doacoes table, ordered by timestamp, for a given id_caixa, between two timestamps
+def get_doacoes(id_caixa, timestamp_inicial, timestamp_final):
+    get_doacoes_query = """
+    SELECT * FROM Doacoes
+    WHERE id_caixa = %s AND timestamp BETWEEN %s AND %s
+    ORDER BY timestamp DESC
+    """
+    try:
+        with connect(
+            host=os.getenv("MYSQL_HOST"),
+            user=os.getenv("MYSQL_USER"),
+            password=os.getenv("MYSQL_PASSWORD"),
+            database=os.getenv("MYSQL_DATABASE"),
+        ) as connection:
+            print("CONECTADO")
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    get_doacoes_query, (id_caixa, timestamp_inicial, timestamp_final)
+                )
+                doacoes = cursor.fetchall()
+                # to dict
+                doacoes = [
+                    dict(zip([key[0] for key in cursor.description], doacao))
+                    for doacao in doacoes
+                ]
+                print("SUCESSO EM BUSCAR DOACOES")
+                return doacoes
     except Error as e:
         print(e)
 
