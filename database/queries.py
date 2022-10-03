@@ -1,40 +1,43 @@
 from getpass import getpass
 from mysql.connector import connect, Error
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def create_table():
     create_caixas_table_query = """
-    CREATE TABLE Caixas(
+    CREATE TABLE IF NOT EXISTS Caixas(
         id INT AUTO_INCREMENT PRIMARY KEY,
         nome VARCHAR(100)
     )
     """
 
     create_doacao_table_query = """
-    CREATE TABLE Doacoes(
+    CREATE TABLE IF NOT EXISTS Doacoes(
         id INT AUTO_INCREMENT PRIMARY KEY,
-        doacao VARCHAR(50),
-        timestamp UNSIGNED BIG INT,
-        id_caixa INT,
+        doacao VARCHAR(50) NOT NULL,
+        timestamp BIGINT UNSIGNED NOT NULL,
+        id_caixa INT NOT NULL,
         FOREIGN KEY (id_caixa) REFERENCES Caixas(id)
     )
     """
 
     create_capacity_table_query = """
-    CREATE TABLE Capacidades(
+    CREATE TABLE IF NOT EXISTS Capacidades(
         id INT AUTO_INCREMENT PRIMARY KEY,
-        cm_restantes FLOAT,
-        id_caixa INT,
-        timestamp UNSIGNED BIG INT,
+        cm_restantes FLOAT NOT NULL,
+        id_caixa INT NOT NULL,
+        timestamp BIGINT UNSIGNED NOT NULL,
         FOREIGN KEY (id_caixa) REFERENCES Caixas(id)
     )
     """
 
     create_collects_table_query = """
-    CREATE TABLE Coletas(
+    CREATE TABLE IF NOT EXISTS Coletas(
         id INT AUTO_INCREMENT PRIMARY KEY,
-        timestamp UNSIGNED BIG INT,
-        id_caixa INT,
+        timestamp BIGINT UNSIGNED NOT NULL,
+        id_caixa INT NOT NULL,
         FOREIGN KEY (id_caixa) REFERENCES Caixas(id)
     )
     """
