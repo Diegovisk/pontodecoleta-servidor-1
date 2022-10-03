@@ -3,7 +3,6 @@ import paho.mqtt.client as paho
 import os
 from paho import mqtt
 
-
 def on_connect(client, userdata, flags, rc, properties=None):
     print("CONNACK received with code %s." % rc)
 
@@ -16,7 +15,6 @@ def on_subscribe(client, userdata, mid, granted_qos, properties=None):
 def on_message(client, userdata, msg):
     # TO-DO: pegar o payload e inserir no banco 
     print(msg.topic + " " + str(msg.qos) + " "+ str(msg.payload))	
-
 
 client = paho.Client(client_id="servidor")
 
